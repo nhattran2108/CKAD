@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Multiple Choice Question</title>
+  <style>
+    /* Add some basic styling to make the question look nice */
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .question {
+      margin-bottom: 20px;
+    }
+    .options {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .options li {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h2 class="question">What is the capital of France?</h2>
+  <ul class="options">
+    <li><input type="radio" id="optionA" name="answer" value="A) Berlin"><label for="optionA">A) Berlin</label></li>
+    <li><input type="radio" id="optionB" name="answer" value="B) Paris"><label for="optionB">B) Paris</label></li>
+    <li><input type="radio" id="optionC" name="answer" value="C) London"><label for="optionC">C) London</label></li>
+    <li><input type="radio" id="optionD" name="answer" value="D) Rome"><label for="optionD">D) Rome</label></li>
+  </ul>
+  <button onclick="checkAnswer()">Submit</button>
+  <div id="result"></div>
+
+  <script>
+    // Read data from Excel file using XLSX library
+    var xlsx = require('xlsx');
+    var workbook = xlsx.readFile('questions.xlsx');
+    var sheetName = workbook.SheetNames[0];
+    var worksheet = workbook.Sheets[sheetName];
+    var data = xlsx.utils.sheet_to_json(worksheet);
+
+    // Get the current question and options
+    var question = data[0].Question;
+    var options = [data[0].OptionA, data[0].OptionB, data[0].OptionC, data[0].OptionD];
+    var correctAnswer = data[0].CorrectAnswer;
+
+    // Display the question and options
+    document.querySelector('.question').textContent = question;
+    var optionsHTML = '';
+    for (var i = 0; i < options.length; i++) {
+      optionsHTML += '<li><input type="radio" id="option' + (i + 1) + '" name="answer" value="' + options[i] + '"><label for="option' + (i + 1) + '">' + options[i] + '</label></li>';
+    }
+    document.querySelector('.options').innerHTML = optionsHTML;
+
+    // Check the answer when the user submits
+    function checkAnswer() {
+      var userAnswer = document.querySelector('input[name="answer"]:checked').value;
+      if (userAnswer === correctAnswer) {
+        document.querySelector('#result').textContent = 'Correct!';
+      } else {
+        document.querySelector('#result').textContent = 'Incorrect. The correct answer is ' + correctAnswer;
+      }
+    }
+  </script>
+</body>
+</html>
